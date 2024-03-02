@@ -86,20 +86,18 @@ class InstructorController extends Controller
             'type_document' => 'required|string',
             'document' => 'required|numeric',
             'name' => 'required|string',
-            'email' => 'required|string',
+            'email' => 'required|email',
             'sex' => 'required|string',
-            'phone' => 'required|numeric',
+            'phone' => 'required|string',
             'address' => 'required|string',
             'birthdate' => 'required|date',
-            'address' => 'required|string',
             'city' => 'required|string',
             'profesion' => 'required|string',
             'estado' => 'required|string',
         ]);
     
         try {
-            $user = User::find($id);
-            $user->type_document = $request->type_document;
+            $user = User::findOrFail($id);
             $user->document = $request->document;
             $user->name = $request->name;
             $user->email = $request->email;
@@ -110,19 +108,17 @@ class InstructorController extends Controller
             $user->city = $request->city;
             $user->save();
     
-            $instructor = Instructor::where('user_id', $id)->first(); 
+            $instructor = Instructor::findOrFail($id);
             $instructor->profesion = $request->profesion;
             $instructor->estado = $request->estado;
             $instructor->save();
     
-            return response()->json(['message' => 'User and Instructor updated successfully']);
-        } catch (QueryException $e) {
-            dd($e->getMessage());
-            return response()->json(['message' => 'Error updating User and Instructor: ' . $e->getMessage()], 500);
+            return response()->json(['message' => 'Instructor and User UPDATED'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
         }
     }
     
-
     public function destroy(string $id)
     {
         $instructor = Instructor::find($id);
